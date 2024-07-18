@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: "Arial", sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+
+      .d-flex {
+        height: 100%;
+        width: 100%;
+      }
+
+      .sidebar {
+        background-color: #2c3e50;
+        width: 150px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 0;
+        justify-content: flex-start;
+        height: auto;
+      }
+
+      .sidebar a {
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px 0;
+        text-decoration: none;
+        font-size: 14px;
+        margin-bottom: 40px;
+      }
+
+      .sidebar a i {
+        font-size: 20px;
+      }
+
+      .sidebar a:hover {
+        background-color: #34495e;
+        border-radius: 8px;
+      }
+
+      .main-content {
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+      }
+
+      .header {
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .header .date {
+        margin-left: auto;
+        color: #6c757d;
+      }
+
+      .content {
+        display: flex;
+        flex-grow: 1;
+        padding: 20px;
+      }
+
+      .content .main {
+        flex-grow: 1;
+        padding-right: 20px;
+      }
+
+      .content .sidebar-right {
+        width: 300px;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .card {
+        background: #ffffff;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 30px;
+        font-size: 18px;
+      }
+
+      .nav-tabs .nav-item .nav-link {
+        background-color: #eceeef;
+        color: #333;
+        padding: 12px 20px;
+        margin-right: 2px;
+        border: 1px solid transparent;
+        border-radius: 8px 8px 0 0;
+      }
+
+      .nav-tabs .nav-item .nav-link.active,
+      .nav-tabs .nav-item .nav-link:hover {
+        background-color: #dcdde1;
+        color: #2c3e50;
+        border-color: #ccc;
+      }
+
+      .tab-content {
+        border: 1px solid #ccc;
+        border-top: none;
+        padding: 20px;
+        border-radius: 0 0 8px 8px;
+      }
+      .task-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+      }
+
+      .task-text {
+        flex-grow: 1;
+      }
+
+      .task-icons i {
+        cursor: pointer;
+        margin-left: 8px;
+        color: #666; 
+      }
+
+      .task-icons i:hover {
+        color: #000; 
+      }
+    </style>
+  </head>
+  <body>
+    <div class="d-flex">
+      <div class="sidebar">
+        <a href="#" class="d-flex flex-column align-items-center text-center">
+          <img
+            src="user-profile-pic-url"
+            alt="User"
+            class="img-fluid rounded-circle mb-3"
+            style="width: 60px; height: 60px"
+          />
+        </a>
+        <div style="margin-bottom: 400px">
+          <a href="#"
+            ><i class="fas fa-tachometer-alt"></i>
+            <span class="d-block">Dashboard</span></a
+          >
+          <a href="#"
+            ><i class="fas fa-calendar-alt"></i>
+            <span class="d-block">Calendar</span></a
+          >
+          <a href="#"
+            ><i class="fas fa-cog"></i> <span class="d-block">Settings</span></a
+          >
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="header">
+          <h5>welcome saikishan</h5>
+          <div class="date">18/07/2024</div>
+        </div>
+        <div class="content">
+          <div class="main">
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" href="#all-todos" data-toggle="tab"
+                  >All todos</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#personal" data-toggle="tab"
+                  >Personal</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#work" data-toggle="tab">Work</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#me-time" data-toggle="tab"
+                  >Me time</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#household" data-toggle="tab"
+                  >Household</a
+                >
+              </li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="all-todos">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="card">
+                      <h5 class="card-title">Personal</h5>
+                      <!-- d -->
+                      <ul class="list-unstyled">
+                        <li class="task-item">
+                          <div class="task-text">
+                            <input type="checkbox" checked /> Call mom
+                          </div>
+                          <div class="task-icons">
+                            <i class="fas fa-edit"></i>
+                          </div>
+                        </li>
+                        <li class="task-item">
+                          <div class="task-text">
+                            <input type="checkbox" checked /> Buy notebook
+                          </div>
+                          <div class="task-icons">
+                            <i class="fas fa-edit"></i>
+                          </div>
+                        </li>
+                      </ul>
+                      <!-- d -->
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="card">
+                      <h5 class="card-title">Work</h5>
+                      <ul class="list-unstyled">
+                        <li><input type="checkbox" checked /> UI design v2</li>
+                        <li><input type="checkbox" /> Meeting at 1pm</li>
+                        <li><input type="checkbox" /> Finish project plan</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="card">
+                      <h5 class="card-title">Household</h5>
+                      <ul class="list-unstyled">
+                        <li><input type="checkbox" /> Laundry</li>
+                        <li><input type="checkbox" /> Grocery shopping</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="card">
+                      <h5 class="card-title">Me time</h5>
+                      <ul class="list-unstyled">
+                        <li><input type="checkbox" checked /> Go for a walk</li>
+                        <li><input type="checkbox" /> Eat good today</li>
+                        <li><input type="checkbox" /> Yoga</li>
+                        <li><input type="checkbox" /> Finish book</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="personal">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="card">
+                      <h5 class="card-title">Personal</h5>
+                      <ul class="list-unstyled">
+                        <li><input type="checkbox" checked /> Call mom</li>
+                        <li><input type="checkbox" checked /> Buy notebook</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="work">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="card">
+                      <h5 class="card-title">Work</h5>
+                      <ul class="list-unstyled">
+                        <li><input type="checkbox" checked /> UI design v2</li>
+                        <li><input type="checkbox" /> Meeting at 1pm</li>
+                        <li><input type="checkbox" /> Finish project plan</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="me-time">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="card">
+                      <h5 class="card-title">Me time</h5>
+                      <ul class="list-unstyled">
+                        <li><input type="checkbox" checked /> Go for a walk</li>
+                        <li><input type="checkbox" /> Eat good today</li>
+                        <li><input type="checkbox" /> Yoga</li>
+                        <li><input type="checkbox" /> Finish book</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="household">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="card">
+                      <h5 class="card-title">Household</h5>
+                      <ul class="list-unstyled">
+                        <li><input type="checkbox" /> Laundry</li>
+                        <li><input type="checkbox" /> Grocery shopping</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sidebar-right">
+            <h5>Recent tasks</h5>
+            <!-- Additional content for the right sidebar can go here -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+  
+  <script>
+    document.querySelectorAll(".fa-times").forEach(function (icon) {
+      icon.addEventListener("click", function () {
+        // Handle delete action
+      });
+    });
+
+    document.querySelectorAll(".fa-edit").forEach(function (icon) {
+      icon.addEventListener("click", function () {
+        // Handle edit action
+      });
+    });
+  </script>
+</html>
