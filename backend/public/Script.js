@@ -1,62 +1,116 @@
-document.addEventListener('DOMContentLoaded', function() {
-  const cards = document.querySelectorAll('.card');
-
-  cards.forEach(card => {
-    card.addEventListener('click', function() {
-      cards.forEach(c => c.classList.remove('expanded'));
-      this.classList.add('expanded');
-    });
-  });
-});
-
 $(document).ready(function () {
+  let showOnlyPending = false;
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      return parts.pop().split(';').shift();
+    }
+    return null;
+  }
+
+  const token = getCookie('token');
+  if (!token) {
+    window.location.href = 'index.html';
+    return;
+  }
+
+  async function loadUserProfile() {
+    try {
+      const response = await fetch('/api/auth/profile', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        console.error('Failed to fetch user profile:', response.statusText);
+        return;
+      }
+
+      const user = await response.json();
+      $('#username').text(user.username);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  }
+  loadUserProfile();
+
+  const today = new Date();
+  $('#currentDate').text(formatDate(today));
+
   async function loadTasks(category) {
     let taskContainer;
     if (category === "#all-todos") {
-      taskContainer = $("#all-tasks");
+        taskContainer = $("#all-tasks");
     } else {
-      taskContainer = $(category + "-tasks");
+        taskContainer = $(category + "-tasks");
     }
-
     taskContainer.empty();
-
     const tasks = await getTasks(category);
 
-    const tasksByCategory = tasks.reduce((acc, task) => {
-      if (!acc[task.category]) {
-        acc[task.category] = [];
-      }
-      acc[task.category].push(task);
-      return acc;
+    const filteredTasks = showOnlyPending ? tasks.filter(task => task.status === 'pending') : tasks;
+
+    if (filteredTasks.length === 0) {
+        $("#noTasksMessage").show();
+    } else {
+        $("#noTasksMessage").hide();
+    }
+
+    const tasksByCategory = filteredTasks.reduce((acc, task) => {
+        if (!acc[task.category]) {
+            acc[task.category] = [];
+        }
+        acc[task.category].push(task);
+        return acc;
     }, {});
 
     for (const [category, tasks] of Object.entries(tasksByCategory)) {
-      const categoryClass = getCategoryClass(category);
-      const cardHtml = `
-        <div class="col-md-3">
-          <div class="card ${categoryClass}">
-            <div class="card-body">
-              <h5 class="card-title">${category}</h5>
-              <ul class="list-unstyled">
-                ${tasks.map(task => `
-                  <li class="task-item">
-                    <div class="task-text">
-                      <input type="checkbox" ${task.status === 'completed' ? 'checked' : ''} /> ${task.title}
-                      <p>${task.description}</p>
+        const categoryClass = getCategoryClass(category);
+        const cardHtml = `
+            <div class="col-md-3">
+                <div class="card ${categoryClass}">
+                    <div class="card-body">
+                        <h5 class="card-title">${category}</h5>
+                        <ul class="list-unstyled">
+                            ${tasks.map(task => `
+                                <li class="task-item bg-white">
+                                    <div class="task-text">
+                                        <input type="checkbox" class="task-title" ${task.status === 'completed' ? 'checked' : ''} /> ${task.title}
+                                        <p class="task-description">${task.description}</p>
+                                        <p class="task-description">DueDate: ${formatDate(task.dueDate)}</p>
+                                    </div>
+                                    <div class="task-icons">
+                                        <i class="fas fa-edit" data-task-id="${task._id}"></i>
+                                        <i class="fas fa-trash" data-task-id="${task._id}"></i>
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
                     </div>
-                    <div class="task-icons">
-                      <i class="fas fa-edit" data-task-id="${task._id}"></i>
-                      <i class="fas fa-trash" data-task-id="${task._id}"></i>
-                    </div>
-                  </li>
-                `).join('')}
-              </ul>
+                </div>
             </div>
-          </div>
-        </div>
-      `;
-      taskContainer.append(cardHtml);
+        `;
+        taskContainer.append(cardHtml);
     }
+}
+
+
+
+
+
+
+
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = (`0${date.getDate()}`).slice(-2);
+    const month = (`0${date.getMonth() + 1}`).slice(-2);
+    const year = (`${date.getFullYear()}`).slice(-2);
+    return `${day}/${month}/${year}`;
   }
 
   function getCategoryClass(category) {
@@ -71,12 +125,31 @@ $(document).ready(function () {
   }
 
   async function getTasks(category) {
+    const token = getCookie('token');
+    if (!token) {
+      return [];
+    }
+
     try {
-      const response = await fetch('/api/todos');
+      const response = await fetch(`/api/todos`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        return [];
+      }
+
       const allTasks = await response.json();
+
       if (category === "#all-todos") {
         return allTasks;
       }
+
       const filteredTasks = allTasks.filter(task => `#${task.category.replace(' ', '-')}` === category);
       return filteredTasks;
     } catch (error) {
@@ -91,31 +164,28 @@ $(document).ready(function () {
 
   loadTasks("#all-todos");
 
-  $('#addTaskButton').on('click', async function() {
-    console.log('Add Task Button Clicked');
+  $('#addTaskButton').on('click', async function () {
     const taskData = {
       title: $('#taskTitle').val(),
       dueDate: $('#dueDate').val(),
       description: $('#description').val(),
-      category: $('#category').val()
+      category: $('#category').val(),
     };
-
-    console.log('Adding task:', taskData);
 
     try {
       const response = await fetch('/api/todos/createtodo', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(taskData)
       });
-      const responseBody = await response.text();
-      console.log('Response:', responseBody);
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+
       $('#taskForm')[0].reset();
       $('#addTaskModal').modal('hide');
 
@@ -123,9 +193,10 @@ $(document).ready(function () {
       loadTasks(activeTab);
 
     } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
+      console.error('Error creating task:', error);
     }
   });
+
   $('#addTaskModal').on('show.bs.modal', function (event) {
     const activeTab = $("ul.nav-tabs li a.active").attr("href");
     const category = activeTab ? activeTab.substring(1) : null;
@@ -133,7 +204,7 @@ $(document).ready(function () {
     if (category && category !== 'all-todos') {
       $('#category').val(category).prop('disabled', true);
     } else {
-      $('#category').val('').prop('disabled', false);
+      $('#category').val('Personal').prop('disabled', false);
     }
   });
 
@@ -143,71 +214,77 @@ $(document).ready(function () {
 
   $(document).on("click", ".task-icons .fa-edit", async function () {
     const taskId = $(this).data("task-id");
-    console.log("Edit Task", taskId);
 
     try {
-        const response = await fetch(`/api/todos/${taskId}`);
-        const task = await response.json();
+      const response = await fetch(`/api/todos/${taskId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const task = await response.json();
 
-        $('#taskTitle').val(task.title);
-        $('#dueDate').val(task.dueDate);
-        $('#description').val(task.description);
-        $('#category').val(task.category).prop('disabled', true);
-        $('#addTaskButton').hide();
-        $('#updateTaskButton').data('task-id', taskId).show();
+      $('#taskTitle').val(task.title);
+      $('#dueDate').val(task.dueDate);
+      $('#description').val(task.description);
+      $('#category').val(task.category).prop('disabled', true);
+      $('#addTaskButton').hide();
+      $('#updateTaskButton').data('task-id', taskId).show();
 
-        $('#addTaskModal').modal('show');
+      $('#addTaskModal').modal('show');
     } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
+      console.error('Error fetching task for edit:', error);
     }
-});
+  });
 
-$('#updateTaskButton').on('click', async function () {
+  $('#updateTaskButton').on('click', async function () {
     const taskId = $(this).data('task-id');
     const taskData = {
-        title: $('#taskTitle').val(),
-        dueDate: $('#dueDate').val(),
-        description: $('#description').val(),
-        category: $('#category').val()
+      title: $('#taskTitle').val(),
+      dueDate: $('#dueDate').val(),
+      description: $('#description').val(),
+      category: $('#category').val(),
     };
 
     try {
-        const response = await fetch(`/api/todos/${taskId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(taskData)
-        });
+      const response = await fetch(`/api/todos/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(taskData)
+      });
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
 
-        $('#taskForm')[0].reset();
-        $('#addTaskModal').modal('hide');
+      $('#taskForm')[0].reset();
+      $('#addTaskModal').modal('hide');
 
-        const activeTab = $("ul.nav-tabs li a.active").attr("href");
-        loadTasks(activeTab);
+      const activeTab = $("ul.nav-tabs li a.active").attr("href");
+      loadTasks(activeTab);
     } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
+      console.error('Error updating task:', error);
     }
-});
+  });
 
-$('#addTaskModal').on('hidden.bs.modal', function () {
+  $('#addTaskModal').on('hidden.bs.modal', function () {
     $('#taskForm')[0].reset();
     $('#addTaskButton').show();
     $('#updateTaskButton').hide();
     $('#category').prop('disabled', false);
-});
-
+  });
 
   $(document).on("click", ".task-icons .fa-trash", async function () {
     const taskId = $(this).data("task-id");
-    console.log(taskId);
+
     try {
       const response = await fetch(`/api/todos/${taskId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -215,9 +292,63 @@ $('#addTaskModal').on('hidden.bs.modal', function () {
       const activeTab = $("ul.nav-tabs li a.active").attr("href");
       loadTasks(activeTab);
     } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
+      console.error('Error deleting task:', error);
     }
   });
 
+  $('#logoutButton').on('click', function () {
+    document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    window.location.href = 'index.html';
+  });
+
+  $(document).on('change', '.task-title', async function (event) {
+    event.preventDefault();
+    const taskItem = $(this).closest('.task-item');
+    const taskId = taskItem.find('.fa-edit').data('task-id');
+    const newStatus = $(this).is(':checked') ? 'completed' : 'pending';
+
+    taskItem.toggleClass('completed-task', $(this).is(':checked'));
+
+    try {
+        await updateTaskStatus(taskId, newStatus);
+    } catch (error) {
+        $(this).prop('checked', !$(this).is(':checked'));
+        taskItem.toggleClass('completed-task', $(this).is(':checked'));
+        alert('Failed to update the task status. Please try again.');
+    }
+  });
+
+  async function updateTaskStatus(taskId, status) {
+    const token = getCookie('token');
+    try {
+      const response = await fetch(`/api/todos/${taskId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status })
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+    } catch (error) {
+      console.error('Error updating task status:', error);
+      throw error;  
+    }
+  }
+
+  $('#settingsLink').on('click', function (event) {
+    event.preventDefault();
+    showOnlyPending = true;  
+    loadTasks("#all-todos");
+  });
+
+  $('#dashboardLink').on('click', function (event) {
+    event.preventDefault();
+    showOnlyPending = false; 
+    loadTasks("#all-todos");
+  });
   
 });

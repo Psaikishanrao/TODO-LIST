@@ -3,26 +3,31 @@ const mongoose = require('mongoose');
 const TodoSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
   status: {
     type: String,
     enum: ['pending', 'completed'],
-    default: 'pending'
+    default: 'pending',
   },
   category: {
     type: String,
     enum: ['Personal', 'Work', 'Me-Time', 'Household'],
-    required: true
+    required: true,
   },
   dueDate: {
     type: Date,
-    required: true
-  }
+    required: true,
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Todo', TodoSchema);

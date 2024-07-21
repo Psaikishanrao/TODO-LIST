@@ -18,7 +18,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 0;
+  padding: 15px 0;
   justify-content: flex-start;
   height: auto;
 }
@@ -28,14 +28,14 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 0;
+  padding: 8px 0;
   text-decoration: none;
-  font-size: 14px;
-  margin-bottom: 40px;
+  font-size: 13px;
+  margin-bottom: 30px;
 }
 
 .sidebar a i {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .sidebar a:hover {
@@ -48,16 +48,16 @@ body {
   flex-grow: 1;
   flex-direction: column;
   overflow: auto;
-  padding: 20px;
+  padding: 15px;
 }
 
 .header {
   background-color: #f8f9fa;
   display: flex;
   align-items: center;
-  padding: 20px;
+  padding: 10px 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .header .date {
@@ -68,12 +68,12 @@ body {
 .content {
   display: flex;
   flex-grow: 1;
-  padding: 20px;
+  padding: 15px;
 }
 
 .content .main {
   flex-grow: 1;
-  padding-right: 20px;
+  padding-right: 15px;
 }
 
 .card {
@@ -81,12 +81,12 @@ body {
   border: none;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-  padding: 30px;
-  font-size: 18px;
+  margin-bottom: 15px;
+  padding: 20px;
+  font-size: 16px;
   overflow: hidden;
   height: auto;
-  min-height: 200px;
+  min-height: 180px;
   transition: transform 0.2s;
 }
 
@@ -101,7 +101,7 @@ body {
 .nav-tabs .nav-item .nav-link {
   background-color: #eceeef;
   color: #333;
-  padding: 12px 20px;
+  padding: 10px 15px;
   margin-right: 2px;
   border: 1px solid transparent;
   border-radius: 8px 8px 0 0;
@@ -120,7 +120,7 @@ body {
   flex-grow: 1;
   border: 1px solid #ccc;
   border-top: none;
-  padding: 20px;
+  padding: 15px;
   border-radius: 0 0 8px 8px;
 }
 
@@ -145,22 +145,62 @@ body {
   color: #000;
 }
 
+.task-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.task-description {
+  font-size: 14px;
+  color: #121212;
+}
+
 .card.bg-task {
-background-color:  #96E7DC; 
+  background-color: #96E7DC;
 }
 
 .card.bg-reminder {
-background-color: #FF775E;  
+  background-color: #FF775E;
 }
 
 .card.bg-idea {
-background-color: #d4e157; 
+  background-color: #d4e157;
 }
 
 .card.bg-todo {
-background-color: #FBB1C5;
+  background-color: #FBB1C5;
 }
 
 .card.bg-event {
-background-color: #60993E; 
+  background-color: #60993E;
+}
+
+.bg-white {
+  background-color: white;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 8px;
+}
+
+#logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  line-height: 60px; 
+}
+
+#logo i {
+  font-size: 24px;
+}
+
+#avatarImage {
+  background-color: white; 
+  border-radius: 50%;
 }
