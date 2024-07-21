@@ -1,3 +1,7 @@
+The issue with the formatting in your `README.md` file might be due to improper line breaks or formatting inconsistencies. Let's ensure the markdown is correctly formatted and add any missing elements that could cause it to render incorrectly.
+
+Here is the corrected markdown for your `README.md` file:
+
 ```markdown
 # Todo List Application
 
@@ -14,24 +18,24 @@ This is a Todo List application with authentication and task management features
 
 1. Clone the repository:
 
-```bash
-git clone https://github.com/Psaikishanrao/TODO-LIST.git
-cd TODO-LIST
-```
+    ```bash
+    git clone https://github.com/Psaikishanrao/TODO-LIST.git
+    cd TODO-LIST
+    ```
 
 2. Install the dependencies:
 
-```bash
-npm install
-```
+    ```bash
+    npm install
+    ```
 
 ### Running the Application
 
 1. Start the server:
 
-```bash
-npm run server
-```
+    ```bash
+    npm run server
+    ```
 
 2. Open your browser and navigate to `http://localhost:5000`.
 
@@ -40,6 +44,7 @@ npm run server
 The API documentation is available at `http://localhost:5000/api-docs`. It is generated using Swagger.
 
 ### File Structure
+
 ```
 TODO-LIST/
 │
