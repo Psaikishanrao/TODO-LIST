@@ -7,7 +7,16 @@ const swaggerOptions = {
     info: {
       title: 'Todo List API',
       version: '1.0.0',
-      description: 'API documentation for the Todo List application',
+      description: `
+        ## Todo List Application
+
+        This is a Todo List application with authentication and task management features. The application includes user registration, login, and task management functionalities categorized into Personal, Work, Me-Time, and Household tasks.
+
+        For more details on setting up and running the project locally, please refer to the [README.md](https://github.com/Psaikishanrao/TODO-LIST/blob/master/README.md).
+
+        ### API Documentation
+        The API documentation is available below.
+      `,
     },
     servers: [
       {

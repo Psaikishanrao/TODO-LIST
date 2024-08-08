@@ -1,0 +1,279 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Todo List API",
+    "version": "1.0.0",
+    "description": "\n        ## Todo List Application\n\n        This is a Todo List application with authentication and task management features. The application includes user registration, login, and task management functionalities categorized into Personal, Work, Me-Time, and Household tasks.\n\n        For more details on setting up and running the project locally, please refer to the [README.md](https://github.com/Psaikishanrao/TODO-LIST/blob/master/README.md).\n\n        ### API Documentation\n        The API documentation is available below.\n      "
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000"
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "User registration",
+        "description": "Register a new user and return a token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Registration successful"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "User login",
+        "description": "Login a user and return a token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/api/auth/profile": {
+      "get": {
+        "summary": "Get user profile",
+        "description": "Get the authenticated user's profile",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/todos": {
+      "get": {
+        "summary": "Get all todos",
+        "description": "Retrieve a list of all todos",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/todos/{id}": {
+      "get": {
+        "summary": "Get a todo by ID",
+        "description": "Retrieve a single todo by its ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The todo ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Todo not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a todo",
+        "description": "Update an existing todo",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The todo ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Todo updated"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Todo not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a todo",
+        "description": "Remove a todo from the list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The todo ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo deleted"
+          },
+          "404": {
+            "description": "Todo not found"
+          }
+        }
+      }
+    },
+    "/api/todos/createtodo": {
+      "post": {
+        "summary": "Create a new todo",
+        "description": "Add a new todo to the list",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Todo created"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/api/todos/{id}/status": {
+      "put": {
+        "summary": "Update a todo's status",
+        "description": "Update the status of an existing todo",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The todo ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Todo status updated"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Todo not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {},
+  "tags": []
+}
