@@ -4,13 +4,15 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "server": "nodemon app.js"
+    "start": "node app.js",
+    "build": "npm install"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "backend": "file:",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
