@@ -5,6 +5,11 @@ const todoRoutes = require('./routes/todoRoutes');
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser');
 const swaggerSetup = require('./swagger');
+const cors = require('cors');
+
+app.use(cors({
+  origin: 'https://todo-list-2hhy.onrender.com'
+}));
 
 dotenv.config();
 const app = express();
