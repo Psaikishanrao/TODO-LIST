@@ -42,70 +42,35 @@ $(document).ready(function () {
   const today = new Date();
   $('#currentDate').text(formatDate(today));
 
-  async function loadTasks(category) {
-    let taskContainer;
-    if (category === "#all-todos") {
+async function loadTasks(category) {
+  let taskContainer;
+  if (category === "#all-todos") {
       taskContainer = $("#all-tasks");
-      taskContainer.empty();
-    } else {
+      taskContainer.empty(); // Clear tasks for All Tasks
+  } else {
       taskContainer = $(category + "-tasks");
-      taskContainer.empty();
-      taskContainer.addClass('task-grid-container');
-    }
-    const tasks = await getTasks(category);
+      taskContainer.empty(); // Clear tasks for category
+      taskContainer.addClass('task-grid-container'); // Add grid layout for category tasks
+  }
+  const tasks = await getTasks(category);
 
-    const filteredTasks = showOnlyPending ? tasks.filter(task => task.status === 'pending') : tasks;
+  const filteredTasks = showOnlyPending ? tasks.filter(task => task.status === 'pending') : tasks;
 
-    if (filteredTasks.length === 0) {
+  if (filteredTasks.length === 0) {
       $("#noTasksMessage").show();
-    } else {
+  } else {
       $("#noTasksMessage").hide();
-    }
+  }
 
-    if (category === "#all-todos") {
+  if (category === "#all-todos") {
+      // Generate a single card for each task in the All Tasks category
       filteredTasks.forEach(task => {
-        const categoryClass = getCategoryClass(task.category);
-        const cardHtml = `
-          <div class="col-md-3 col-sm-6 mb-4">
-              <div class="card ${categoryClass}">
-                  <div class="card-body">
-                      <h5 class="card-title">${task.category}</h5>
-                      <ul class="list-unstyled">
-                          <li class="task-item bg-white">
-                              <div class="task-text">
-                                  <input type="checkbox" class="task-title" ${task.status === 'completed' ? 'checked' : ''} /> ${task.title}
-                                  <p class="task-description">${task.description}</p>
-                                  <p class="task-description">DueDate: ${formatDate(task.dueDate)}</p>
-                              </div>
-                              <div class="task-icons">
-                                  <i class="fas fa-edit" data-task-id="${task._id}"></i>
-                                  <i class="fas fa-trash" data-task-id="${task._id}"></i>
-                              </div>
-                          </li>
-                      </ul>
-                  </div>
-              </div>
-          </div>
-        `;
-        taskContainer.append(cardHtml);
-      });
-    } else {
-      const tasksByCategory = filteredTasks.reduce((acc, task) => {
-        if (!acc[task.category]) {
-          acc[task.category] = [];
-        }
-        acc[task.category].push(task);
-        return acc;
-      }, {});
-
-      for (const [category, tasks] of Object.entries(tasksByCategory)) {
-        tasks.forEach(task => {
-          const categoryClass = getCategoryClass(category);
+          const categoryClass = getCategoryClass(task.category);
           const cardHtml = `
               <div class="col-md-3 col-sm-6 mb-4">
                   <div class="card ${categoryClass}">
                       <div class="card-body">
-                          <h5 class="card-title">${category}</h5>
+                          <h5 class="card-title">${task.category}</h5>
                           <ul class="list-unstyled">
                               <li class="task-item bg-white">
                                   <div class="task-text">
@@ -124,10 +89,54 @@ $(document).ready(function () {
               </div>
           `;
           taskContainer.append(cardHtml);
-        });
+      });
+  } else {
+      // Existing code for other categories remains the same
+      const tasksByCategory = filteredTasks.reduce((acc, task) => {
+          if (!acc[task.category]) {
+              acc[task.category] = [];
+          }
+          acc[task.category].push(task);
+          return acc;
+      }, {});
+
+      for (const [category, tasks] of Object.entries(tasksByCategory)) {
+          tasks.forEach(task => {
+              const categoryClass = getCategoryClass(category);
+              const cardHtml = `
+                  <div class="col-md-3 col-sm-6 mb-4">
+                      <div class="card ${categoryClass}">
+                          <div class="card-body">
+                              <h5 class="card-title">${category}</h5>
+                              <ul class="list-unstyled">
+                                  <li class="task-item bg-white">
+                                      <div class="task-text">
+                                          <input type="checkbox" class="task-title" ${task.status === 'completed' ? 'checked' : ''} /> ${task.title}
+                                          <p class="task-description">${task.description}</p>
+                                          <p class="task-description">DueDate: ${formatDate(task.dueDate)}</p>
+                                      </div>
+                                      <div class="task-icons">
+                                          <i class="fas fa-edit" data-task-id="${task._id}"></i>
+                                          <i class="fas fa-trash" data-task-id="${task._id}"></i>
+                                      </div>
+                                  </li>
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+              `;
+              taskContainer.append(cardHtml);
+          });
       }
-    }
   }
+}
+
+
+
+
+
+
+
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -169,6 +178,7 @@ $(document).ready(function () {
       }
 
       const allTasks = await response.json();
+      
 
       if (category === "#all-todos") {
         return allTasks;
@@ -293,10 +303,36 @@ $(document).ready(function () {
     }
   });
 
-  $('#showPendingTasks').on('change', function () {
-    showOnlyPending = $(this).is(':checked');
-    const activeTab = $("ul.nav-tabs li a.active").attr("href");
-    loadTasks(activeTab);
+  $('#addTaskModal').on('hidden.bs.modal', function () {
+    $('#taskForm')[0].reset();
+    $('#addTaskButton').show();
+    $('#updateTaskButton').hide();
+    $('#category').prop('disabled', false);
+  });
+
+  $(document).on("click", ".task-icons .fa-trash", async function () {
+    const taskId = $(this).data("task-id");
+
+    try {
+      const response = await fetch(`/api/todos/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const activeTab = $("ul.nav-tabs li a.active").attr("href");
+      loadTasks(activeTab);
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  });
+
+  $('#logoutButton').on('click', function () {
+    document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    window.location.href = 'index.html';
   });
 
   $(document).on('click', '.task-icons .fa-trash', async function () {
@@ -366,22 +402,40 @@ $(document).ready(function () {
   });
   
   async function updateTaskStatus(taskId, status) {
+    const token = getCookie('token');
     try {
       const response = await fetch(`/api/todos/${taskId}/status`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update task status.');
+        throw new Error('Network response was not ok');
       }
     } catch (error) {
       console.error('Error updating task status:', error);
-      throw error;
+      throw error;  
     }
   }
+
+  $('#settingsLink').on('click', function (event) {
+    event.preventDefault();
+    showOnlyPending = true;  
+    loadTasks("#all-todos");
+  });
+
+  $('#dashboardLink').on('click', function (event) {
+    event.preventDefault();
+    showOnlyPending = false; 
+    loadTasks("#all-todos");
+  });
+
+
+
+
+  
 });
