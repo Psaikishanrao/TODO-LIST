@@ -15,7 +15,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const data = await response.json();
     document.cookie = `token=${data.token}; Path=/; max-age=${24 * 60 * 60}; `;
     console.log('Set cookie:', document.cookie); 
-    window.location.href = `dashboard.html`;
+    window.location.href = `Dashboard.html`;
   } else {
     alert('Invalid credentials');
   }
@@ -37,7 +37,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
   if (response.ok) {
     const data = await response.json();
     document.cookie = `token=${data.token}; Path=/; max-age=${24 * 60 * 60}; Secure`;
-    window.location.href = `dashboard.html`;
+    window.location.href = `Dashboard.html`;
   } else {
     alert('Error registering');
   }

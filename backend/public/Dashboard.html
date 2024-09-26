@@ -4,15 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
-    <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
 
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -33,9 +29,27 @@
               <a href="#" id="settingsLink"> <i class="fas fa-clock"></i><span class="d-block">Pending tasks</span></a>
           </div>
         </div>
+        <div class="mobilesidebar d-none">
+            <a href="#" class="d-flex flex-row align-items-center text-center" id="logo-mobile">
+                <img
+                    id="avatarImage-mobile"
+                    src="https://avataaars.io/?avatarStyle=Circle&topType=ShortHairDreads01&accessoriesType=Round&hairColor=Brown&clotheType=GraphicTee&clotheColor=Blue&graphicType=Skull&eyeType=Happy&eyebrowType=Default&mouthType=Smile&skinColor=Light"
+                    alt="Random Avatar"
+                    class="img-fluid rounded-circle mb-3"
+                    style="width: 40px; height: 40px"
+                />
+            </a>
+            <a href="Dashboard.html"  id="dashboardLink"><i class="fas fa-tachometer-alt"></i><span class="d-block">All-Tasks</span></a>
+              <a href="#" id="settingsLink"> <i class="fas fa-clock"></i><span class="d-block">Pending tasks</span></a>
+        </div>
+        
+        
         <div class="main-content">
             <div class="header d-flex justify-content-between align-items-center" style="height: 50px;">
-                <div style="white-space: nowrap; color:black;font-size: large;">Welcome, <span id="username"></span></div>
+                <button class="btn btn-secondary d-md-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                  </button>
+                <div style="white-space: nowrap; color:black;font-size: large;">Welcome <span id="username"></span></div>
                 <div class="d-flex align-items-center">
                      <div class="date" style="margin-right: 20px;font-style: italic;font-weight: bold; color: black;" id="currentDate"></div>
                     <button id="logoutButton" class="btn btn-primary">Logout</button>
@@ -146,6 +160,42 @@
           })
           .catch(error => console.error('Error fetching users:', error));
       });
+      document.addEventListener('DOMContentLoaded', () => {
+    const sidebarToggle = document.getElementById('sidebarToggle'); 
+    const mobileSidebar = document.querySelector('.mobilesidebar');
+
+    sidebarToggle.addEventListener('click', () => {
+        console.log("Hamburger clicked"); 
+
+        if (mobileSidebar.classList.contains('d-none')) {
+            mobileSidebar.classList.remove('d-none');
+            mobileSidebar.classList.add('show');
+        } else {
+            mobileSidebar.classList.remove('show');
+            mobileSidebar.classList.add('hide');
+            mobileSidebar.addEventListener('animationend', () => {
+                mobileSidebar.classList.add('d-none');
+                mobileSidebar.classList.remove('hide');
+            }, { once: true });
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!mobileSidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+            console.log("Clicked outside sidebar");
+            if (mobileSidebar.classList.contains('show')) {
+                mobileSidebar.classList.remove('show');
+                mobileSidebar.classList.add('hide');
+                mobileSidebar.addEventListener('animationend', () => {
+                    mobileSidebar.classList.add('d-none');
+                    mobileSidebar.classList.remove('hide');
+                }, { once: true });
+            }
+        }
+    });
+});
+
+
     </script>
 </body>
 </html>
